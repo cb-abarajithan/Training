@@ -1,0 +1,18 @@
+[
+    {
+        "group_header": "Customer Details",
+        "position": -1,
+        "old": [
+            "Customer First Name",
+            "Customer Last Name",
+            "Customer Email",
+            "Customer Company"
+        ],
+        "new":[
+            "First Name",
+            "Last Name",
+            "Email",
+            "Company"
+        ]
+    }
+]
