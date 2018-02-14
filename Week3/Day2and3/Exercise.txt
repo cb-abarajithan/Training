@@ -1,0 +1,223 @@
+Creation of ReservationSystem Database.
+
+Stations Table:
+    CREATE TABLE Users(StationId INT PRIMARY KEY, StationCode TEXT);
+
+Routes Table:
+    CREATE TABLE Routes(
+        RouteId INT PRIMARY KEY, 
+        OriginStationId INT, 
+        DestinationStationId INT,
+        DistanceInKms INT,
+        FOREIGN KEY (OriginStationId) REFERENCES Stations(StationId),
+        FOREIGN KEY (DestinationStationId) REFERENCES Stations(StationId)
+    );
+
+Trains Table:
+    CREATE TABLE Trains(
+    TrainNo INT PRIMARY KEY,
+    TrainName TEXT
+    );
+
+TrainRouteMaps Table:
+    CREATE TABLE TrainRouteMaps(
+    RouteId INT,
+    TrainNo INT,
+    ArrivalTime TIME,
+    DepartureTime TIME,
+    DurationInMins INT(5),
+    PRIMARY KEY (RouteId, TrainNo),
+    FOREIGN KEY (RouteId) REFERENCES Routes(RouteId),
+    FOREIGN KEY (TrainNo) REFERENCES Trains(TrainNo)
+    );
+
+Coaches Table:
+    CREATE TABLE Coaches(
+    CoachCode INT PRIMARY KEY,
+    CostPerKm FLOAT(5,2)
+    );
+
+TrainCoaches Table:
+    CREATE TABLE TrainCoaches(
+    TrainNo INT,
+    CoachCode INT,
+    NoOfSeats INT,
+    FOREIGN KEY (TrainNo) REFERENCES Trains(TrainNo),
+    FOREIGN KEY (CoachCode) REFERENCES Coaches(CoachCode)
+    );
+
+Bookings Table:
+    CREATE TABLE Bookings(
+    BookingRefNo INT PRIMARY KEY,
+    RouteId INT,
+    TrainNo INT,
+    CoachCode INT,
+    DateOfJourney DATE,
+    DateOfBooking DATE,
+    NoOfTickets INT,
+    FOREIGN KEY (RouteId) REFERENCES TrainRouteMaps(RouteId),
+    FOREIGN KEY (TrainNo) REFERENCES TrainRouteMaps(TrainNo),
+    FOREIGN KEY (CoachCode) REFERENCES Coaches(CoachCode)
+    );
+
+Users Table:
+    CREATE TABLE Users(
+    UserId INT PRIMARY KEY,
+    LoginId INT,
+    LPassword TEXT
+    );
+
+
+
+1. To get the list of all trains
+    SELECT TrainName FROM Trains;
+
+2. To get the list of all train routes in the database
+    SELECT O.StationCode AS Origin, D.StationCode AS Destination, DistanceInKms 
+    FROM Stations O, Stations D, Routes 
+    WHERE Routes.OriginStationId = O.StationId AND Routes.DestinationStationId = D.StationId
+    ORDER BY Routes.RouteId;
+
+3. Total number of seats in the each train.
+    SELECT Trains.TrainName, SUM(TrainCoaches.NoOfSeats) as TotalSeats FROM TrainCoaches 
+    LEFT JOIN Trains 
+    ON TrainCoaches.TrainNo = Trains.TrainNo 
+    GROUP BY TrainCoaches.TrainNo ;
+
+4. List of all routes goes to Bangalore
+    SELECT O.StationCode AS Origin, D.StationCode AS Destination 
+    FROM Stations O, Stations D, Routes 
+    WHERE 
+    Routes.OriginStationId = O.StationId AND 
+    Routes.DestinationStationId = D.StationId AND
+    D.StationCode='BLR'
+    ORDER BY Routes.RouteId;
+
+5. List of all routes starting from bangalore, calcutta and chennai
+    SELECT O.StationCode AS Origin, D.StationCode AS Destination 
+    FROM Stations O, Stations D, Routes 
+    WHERE 
+    Routes.OriginStationId = O.StationId AND 
+    Routes.DestinationStationId = D.StationId AND
+    (O.StationCode='BLR' OR O.StationCode='KOAA' OR O.StationCode='CHN')
+    ORDER BY Routes.RouteId;
+
+6. List of all the bookings booked between 1st Jan 2005 and 31st Dec 2005
+    SELECT Bookings.BookingRefNo, Trains.TrainName, O.StationCode as Source, D.StationCode as Destination, Bookings.CoachCode, Bookings.NoOfTickets
+    FROM Bookings
+    INNER JOIN Trains ON Trains.TrainNo=Bookings.TrainNo
+    INNER JOIN Routes ON Routes.RouteId=Bookings.RouteId
+    INNER JOIN Stations O ON O.StationId=Routes.OriginStationId
+    INNER JOIN Stations D ON D.StationId=Routes.DestinationStationId
+    ORDER BY Trains.TrainName;
+
+7. List of all trains whose name begins with B
+    SELECT TrainName FROM Trains WHERE TrainName LIKE 'B%';
+
+8. List of all bookings where DOB is not null
+    SELECT Bookings.BookingRefNo, Trains.TrainName, O.StationCode as Source, D.StationCode as Destination, Bookings.CoachCode, Bookings.NoOfTickets
+    FROM Bookings
+    INNER JOIN Trains ON Trains.TrainNo=Bookings.TrainNo
+    INNER JOIN Routes ON Routes.RouteId=Bookings.RouteId
+    INNER JOIN Stations O ON O.StationId=Routes.OriginStationId
+    INNER JOIN Stations D ON D.StationId=Routes.DestinationStationId
+    WHERE Bookings.DateOfJourney IS NOT NULL
+    ORDER BY Trains.TrainName;
+
+9. List of all bookings for the booked in 2006, DOJ in 2007
+    SELECT Bookings.BookingRefNo, Trains.TrainName, O.StationCode as Source, D.StationCode as Destination, Bookings.CoachCode, Bookings.NoOfTickets
+    FROM Bookings
+    INNER JOIN Trains ON Trains.TrainNo=Bookings.TrainNo
+    INNER JOIN Routes ON Routes.RouteId=Bookings.RouteId
+    INNER JOIN Stations O ON O.StationId=Routes.OriginStationId
+    INNER JOIN Stations D ON D.StationId=Routes.DestinationStationId
+    WHERE 
+    (
+        (YEAR(Bookings.DateOfJourney)=YEAR('2007-01-01')) AND  
+        (YEAR(Bookings.DateOfBooking)=YEAR('2006-01-01'))
+    )
+    ORDER BY Trains.TrainName;
+
+10. Total number of coaches in the all the trains
+    SELECT Trains.TrainName, COUNT(TrainCoaches.CoachCode) FROM Trains
+    LEFT JOIN TrainCoaches
+    ON Trains.TrainNo = TrainCoaches.TrainNo
+    GROUP BY Trains.TrainNo;
+
+11. Total number of bookings in the database for the train no 16198
+    SELECT COUNT(Bookings.BookingRefNo) as 'No of Bookings' FROM Bookings 
+    WHERE TrainNo=16198;
+
+12. Total no of tickets column 'total' , booked for train no. 14198
+    SELECT SUM(NoOfTickets) as Total FROM Bookings 
+    WHERE TrainNo=4;
+
+13. Minimum distance route
+    SELECT O.StationCode as Source, D.StationCode as Destination, Routes.DistanceInKms
+    FROM Stations O, Stations D, Routes 
+    WHERE O.StationId=Routes.OriginStationId AND 
+    D.StationId=Routes.DestinationStationId
+    ORDER BY Routes.DistanceInKms
+    LIMIT 1;
+
+    Using SubQuery: 
+    --------------------
+    SELECT O.StationCode as Source, D.StationCode as Destination, Routes.DistanceInKms
+    FROM Stations O, Stations D, Routes 
+    WHERE O.StationId=Routes.OriginStationId AND 
+    D.StationId=Routes.DestinationStationId AND
+    Routes.DistanceInKms = (SELECT MIN(Routes.DistanceInKms) FROM Routes);
+
+14. Total number of tickets booked for each train in the database
+    SELECT Trains.TrainName, SUM(Bookings.NoOfTickets) as 'Total Tickets' FROM Trains
+    LEFT JOIN Bookings
+    ON Trains.TrainNo = Bookings.TrainNo
+    GROUP BY Trains.TrainName;
+
+15. cost for 50 kms for each coach.
+    SELECT CoachCode, 50*CostPerKm FROM Coaches;
+
+16. List the train name and departure time for the trains starting from Bangalore.
+    SELECT Trains.TrainName, TrainRouteMaps.DepartureTime FROM Trains 
+    INNER JOIN TrainRouteMaps ON Trains.TrainNo=TrainRouteMaps.TrainNo
+    INNER JOIN Routes ON TrainRouteMaps.RouteId=Routes.RouteId
+    INNER JOIN Stations ON Stations.StationId = Routes.OriginStationId
+    WHERE Stations.StationCode='BLR';
+
+17. List the trains for which the total no of tickets booked is greater than 500
+    SELECT Trains.TrainName FROM Trains
+    LEFT JOIN Bookings
+    ON Trains.TrainNo = Bookings.TrainNo    
+    GROUP BY Trains.TrainName
+    HAVING SUM(Bookings.NoOfTickets) > 500;
+
+18. List the trains for which the total no of tickets booked is lesser than 50
+    SELECT Trains.TrainName FROM Trains
+    LEFT JOIN Bookings
+    ON Trains.TrainNo = Bookings.TrainNo    
+    GROUP BY Trains.TrainName
+    HAVING SUM(Bookings.NoOfTickets) < 50;
+
+19. List the bookings along with train name, origin station, destination station and coach code after the date of journey ’25th Feb 2015’
+    SELECT Trains.TrainName, O.StationCode as Source, D.StationCode as Destination, Bookings.CoachCode
+    FROM Bookings
+    INNER JOIN Trains ON Trains.TrainNo=Bookings.TrainNo
+    INNER JOIN Routes ON Routes.RouteId=Bookings.RouteId
+    INNER JOIN Stations O ON O.StationId=Routes.OriginStationId
+    INNER JOIN Stations D ON D.StationId=Routes.DestinationStationId
+    WHERE Bookings.DateOfJourney > '2015-02-25'
+    ORDER BY Trains.TrainName;
+
+20. List the trains via the route Mysore - Chennai
+    SELECT Trains.TrainName FROM Trains 
+    INNER JOIN TrainRouteMaps ON Trains.TrainNo=TrainRouteMaps.TrainNo
+    INNER JOIN Routes ON TrainRouteMaps.RouteId=Routes.RouteId
+    INNER JOIN Stations O ON O.StationId = Routes.OriginStationId
+    INNER JOIN Stations D ON D.StationId = Routes.DestinationStationId
+    WHERE O.StationCode='MDU' AND D.StationCode='CHN';
+
+21. List the trains for which are booked till now.
+    SELECT Trains.TrainName FROM Trains
+    INNER JOIN Bookings
+    ON Trains.TrainNo=Bookings.TrainNo
+    GROUP BY Trains.TrainName;

@@ -1,0 +1,190 @@
+Queries from the "marks" table using inner join with the table "students" table to replace student_id with name.
+
+1. Select the students who has not appeared in the annual exams.
+Format: All columns of the “marks” table. (Including name )
+    SELECT students.name, * FROM marks 
+    INNER JOIN students 
+    ON students.id = student_id
+    WHERE annual IS NULL;
+
+2. Select the students who has not appeared in the annual exams during the year “2005”.
+Format: name, subject_id, year
+    SELECT students.name, subject_id, year FROM marks 
+    INNER JOIN students 
+    ON students.id = student_id 
+    WHERE annual IS NULL AND 
+    year=2005;
+
+3. Select the students who has appeared in one of the exams - quarterly, half_yearly or annual.
+Format: name, subject_id, year
+    SELECT students.name, subject_id, year FROM marks 
+    INNER JOIN students 
+    ON students.id = student_id 
+    WHERE 
+    quarterly IS NOT NULL OR 
+    half_yearly IS NOT NULL OR 
+    annual IS NOT NULL;
+
+4. Select the students who has scored more than 90 in all the exams - quarterly, half_yearly and annual.
+Format: name, subject_id, year, quarterly, half_yearly, annual
+    SELECT students.name, subject_id, year, quarterly, half_yearly, annual FROM marks 
+    INNER JOIN students 
+    ON students.id = student_id 
+    WHERE 
+    quarterly > 90 AND 
+    half_yearly > 90 AND 
+    annual > 90;
+
+5. List the average marks(in quarterly, half_yearly & annual) for each subject scored for the year.
+Format: name, subject_id, average, year
+    SELECT students.name, subject_id, AVG((quarterly + half_yearly + annual)/3) as Average, year FROM marks 
+    INNER JOIN students
+    ON students.id = student_id
+    GROUP BY subject_id, year;
+
+6. List the average marks(in quarterly, half_yearly & annual) for each subject scored for the years 2003 & 2004
+Format: name, subject_id, average, year
+    SELECT students.name, subject_id, AVG((quarterly + half_yearly + annual)/3) as Average, year FROM marks 
+    INNER JOIN students
+    ON students.id = student_id
+    WHERE
+    year=2003 OR year=2004
+    GROUP BY subject_id, year;
+
+
+
+Write SQL queries for the below questions after loading the sample exercise data. All these queries should be joined with the “students” table to display the student name instead of student_id.
+
+1. List the students who didn’t appear for any exams.
+Format: name
+    SELECT students.name from marks 
+    INNER JOIN students
+    ON students.id = student_id 
+    WHERE
+    quarterly IS NULL AND
+    half_yearly IS NULL AND
+    annual IS NULL;
+
+2. Find the total marks scored by each students in the annual exams. If the student hasn’t appeared for any annual exam, he should still be listed with total marks scored as “0”.
+Format: name, marks, year
+    SELECT students.name, SUM(annual) AS Marks, year FROM marks 
+    INNER JOIN students 
+    ON students.id = student_id 
+    GROUP BY students.name, year;
+
+3. List the students with the total marks scored in quarterly from all the subjects they had appeared during the year 2003.
+Format: name, total, grade
+    SELECT students.name, IFNULL(SUM(quarterly),0) AS total, grade FROM marks 
+    INNER JOIN students 
+    ON students.id = student_id 
+    WHERE 
+    year=2003
+    GROUP BY students.name, grade
+    ORDER BY students.id;
+
+4. List the 9th and 10th grade students who received more than 3 medals.
+Format: name, grade, no_of_medals
+    SELECT students.name, grade, COUNT(medal_won) as no_of_medals FROM medals 
+    FULL JOIN students 
+    ON students.id = student_id
+    WHERE
+    grade=6 OR grade=7
+    GROUP BY students.name, grade
+    HAVING COUNT(medal_won) > 1;
+
+5. List the students who got less than 2 medals. This should also include the students who has not won any medals.
+Format: name, grade, no_of_medals
+    SELECT name, medals.grade, COUNT(medals.medal_won) AS no_of_medals FROM students 
+    LEFT JOIN medals
+    ON students.id = medals.student_id
+    GROUP BY name
+    HAVING COUNT(medals.medal_won) < 2;
+
+6. List the students who has not yet received any medals 
+but scored more than 90 marks in all the subjects in the annual exam for that year.
+Format: name, year
+    SELECT students.name, marks.year FROM (
+        (students INNER JOIN marks ON students.id = student_id)
+        INNER JOIN medals ON students.id = medals.student_id
+    ) WHERE
+    annual > 90
+    GROUP BY marks.year
+    HAVING COUNT(medals.medal_won) = 0;
+
+
+7. List the records from the medals table for the students who had won more than 3 medals.
+Format: name, game_id, medal_won, year, grade
+    SELECT students.name, game_id, medal_won, year, grade FROM medals
+    INNER JOIN students
+    ON students.id = student_id
+    GROUP BY students.name
+    HAVING COUNT(medal_won) > 3;
+
+
+8. List the number of medals and percentage of marks(based on total for the 5 subjects) scored in each year.
+Format: name, medals, quarterly_per, half_yearly_per, annual_per, year, grade
+
+    SELECT MarkStudent.name,
+    (
+        SELECT COUNT(medal_won) FROM medals WHERE medals.student_id = MarkStudent.id AND medals.year = MarkStudent.year
+    ) as medals,
+    quarterly_per,
+    half_yearly_per,
+    annual_per,
+    MarkStudent.year FROM 
+    (
+        SELECT students.id, name, year, 
+        IFNULL(CONCAT(ROUND(SUM(quarterly)/5,0),'%'),'0%') as quarterly_per,
+        IFNULL(CONCAT(ROUND(SUM(quarterly)/5,0),'%'),'0%') as half_yearly_per,
+        IFNULL(CONCAT(ROUND(SUM(quarterly)/5,0),'%'),'0%') as annual_per 
+        FROM students 
+        INNER JOIN marks 
+        ON student_id = students.id 
+        GROUP BY name,year
+    ) AS MarkStudent
+    LEFT JOIN medals
+    ON MarkStudent.id = student_id 
+    GROUP BY name, year
+    ORDER BY MarkStudent.id, MarkStudent.year;
+
+
+9. Lets assign some rating for the total marks scored - S(450-500), A(400-449), B(350-399), C(300-349), D(250,299), E(200-249), F(below 200). 
+List the students with the grade obtained in each year for each exam(quarterly, half-yearly and annual)
+Format: name, quarterly_rating, half_yearly_rating, annual_rating, year, grade
+
+    SELECT students.name, 
+    CASE
+        WHEN SUM(quarterly) BETWEEN 450 AND 500 THEN 'S'
+        WHEN SUM(quarterly) BETWEEN 400 AND 449 THEN 'A'
+        WHEN SUM(quarterly) BETWEEN 350 AND 399 THEN 'B'
+        WHEN SUM(quarterly) BETWEEN 300 AND 349 THEN 'C'
+        WHEN SUM(quarterly) BETWEEN 250 AND 299 THEN 'D'
+        WHEN SUM(quarterly) BETWEEN 200 AND 249 THEN 'E'
+    ELSE 'F'
+    END AS quarterly_rating, 
+
+    CASE
+        WHEN SUM(half_yearly) BETWEEN 450 AND 500 THEN 'S'
+        WHEN SUM(half_yearly) BETWEEN 400 AND 449 THEN 'A'
+        WHEN SUM(half_yearly) BETWEEN 350 AND 399 THEN 'B'
+        WHEN SUM(half_yearly) BETWEEN 300 AND 349 THEN 'C'
+        WHEN SUM(half_yearly) BETWEEN 250 AND 299 THEN 'D'
+        WHEN SUM(half_yearly) BETWEEN 200 AND 249 THEN 'E'
+    ELSE 'F'
+    END AS half_yearly_rating,
+
+    CASE
+        WHEN SUM(annual) BETWEEN 450 AND 500 THEN 'S'
+        WHEN SUM(annual) BETWEEN 400 AND 449 THEN 'A'
+        WHEN SUM(annual) BETWEEN 350 AND 399 THEN 'B'
+        WHEN SUM(annual) BETWEEN 300 AND 349 THEN 'C'
+        WHEN SUM(annual) BETWEEN 250 AND 299 THEN 'D'
+        WHEN SUM(annual) BETWEEN 200 AND 249 THEN 'E'
+    ELSE 'F'
+    END AS annual_rating,
+
+    marks.year, marks.grade 
+    FROM students 
+    INNER JOIN marks 
+    ON students.id = marks.student_id 
+    GROUP BY students.name, marks.year, marks.grade;

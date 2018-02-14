@@ -1,0 +1,52 @@
+Student table:
+
+1. Select all students:
+    SELECT * FROM STUDENTS;
+
+2. Select all the students whose names starts with “H”
+    SELECT * FROM students WHERE name LIKE 'H%';
+
+3. Select all the students whose name has the alphabet “a”
+    SELECT * FROM students WHERE name LIKE '%a%';
+
+4. Select all the students and list the results sorted in alphabetical order(a-z).
+    SELECT * FROM students ORDER BY name;
+
+5. List the first “2” students with the results sorted in the alphabetical order(a-z).
+    SELECT * FROM students ORDER BY name LIMIT 2;
+
+6. List the next “2” students(3rd and 4th) when they are sorted in the alphabetical order.
+    SELECT * FROM students ORDER BY name LIMIT 2,2;
+
+Marks Table:
+
+1. Select the students who has not appeared in the annual exams. Format: All columns of the “marks” table.
+    SELECT * FROM marks WHERE annual IS NULL;
+
+2. Select the students who has not appeared in the annual exams during the year “2005”. Format: student_id, subject_id, year
+    SELECT student_id, subject_id, year FROM marks 
+    -> WHERE annual IS NULL AND year=2005;
+
+3. Select the students who has appeared in one of the exams - quarterly, half_yearly or annual. Format: student_id, subject_id, year
+    SELECT student_id, subject_id, year FROM marks 
+    WHERE 
+    quarterly IS NOT NULL OR 
+    half_yearly IS NOT NULL OR 
+    annual IS NOT NULL;
+
+4. Select the students who has scored more than 90 in all the exams - quarterly, half_yearly and annual. Format: student_id, subject_id, year, quarterly, half_yearly, annual
+    SELECT student_id, subject_id, year, quarterly, half_yearly, annual FROM marks 
+    WHERE
+    quarterly > 90 AND
+    half_yearly > 90 AND
+    annual > 90;
+
+5. List the average marks(in quarterly, half_yearly & annual) for each subject scored for the year. Format: student_id, subject_id, average, year
+    SELECT student_id, subject_id, AVG((quarterly + half_yearly + annual)/3) as Average, year FROM marks 
+    GROUP BY subject_id, year;
+
+6. List the average marks(in quarterly, half_yearly & annual) for each subject scored for the years 2003 & 2004. Format: student_id, subject_id, average, year
+    SELECT student_id, subject_id, AVG((quarterly + half_yearly + annual)/3) as Average, year FROM marks 
+        -> WHERE year=2003 OR year=2004 
+        -> GROUP BY subject_id, year;
+
