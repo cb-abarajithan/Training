@@ -1,0 +1,53 @@
+Triggers:
+    - Add a column average to the table marks. Write a trigger to calculate the average marks for the subject whenever any insert/update happens in the columns quarterly, half_yearly and annual in the table 'marks'.
+     --> alter table marks add column average float default 0;
+     --> update marks set average = (quarterly + half_yearly + annual)/3;
+
+     --> procedure:
+            delimiter $$
+            create procedure marks_avg_insert_or_update()
+            begin
+                update marks set average = (quarterly + half_yearly + annual)/3;
+            end$$
+            delimiter ;
+
+        insert trigger:
+            delimiter $$
+            create trigger marks_avg_insert_trigger 
+            after insert on marks
+            for each row
+            begin
+                call marks_avg_insert_or_update();
+            end$$
+            delimiter ;
+
+        update trigger:
+            delimiter $$
+            create trigger marks_avg_update_trigger 
+            after update on marks
+            for each row
+            begin
+                call marks_avg_insert_or_update();
+            end$$
+            delimiter ;
+
+    - Rename the column name from medal_won to medal_received in the table medals.
+        - Add a column medal_received to the table medals.
+            alter table medals add column medal_received TEXT;
+
+        - Write a trigger to copy the values to both the columns(medal_won and medal_received) whenever any of these columns inserted/updated.
+            delimiter $$
+            create trigger trigger_on_medals_update
+            after update on medals
+            for each row
+            begin
+                if NEW.medal_won <> OLD.medal_won then
+                    update medals set medal_received = NEW.medal_won;
+                else
+                    update medals set medal_won = NEW.medal_received;
+                end if;
+            end$$
+            delimiter ;
+
+        - Drop the column medal_won.
+            --> alter table medals drop column medal_won;

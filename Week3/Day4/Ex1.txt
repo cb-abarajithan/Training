@@ -1,0 +1,48 @@
+Alter Table:
+    Add columns 'created_at' and 'updated_at' to the tables marks, students and medals.
+        - ALTER TABLE students ADD COLUMN (created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP);
+        - ALTER TABLE marks ADD COLUMN (created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP);
+        - ALTER TABLE medals ADD COLUMN (created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP);
+
+    Replace the null values in quarterly, half_yearly and annual columns with 0 and make those columns as not nullable.
+        - ALTER TABLE marks 
+            MODIFY COLUMN quarterly INT NOT NULL DEFAULT 0,
+            MODIFY COLUMN half_yearly INT NOT NULL DEFAULT 0, 
+            MODIFY COLUMN annual INT NOT NULL DEFAULT 0;
+
+EXERCISE:
+---------------------
+
+Using the table training_sample, do the following
+create a table students_summary with the below columns
+    - student_id
+    - student_name
+    - year
+    - percentage (got in annual exams)
+    - no_of_medals_received
+
+    create table students_summary
+    (student_id INT,
+    student_name TEXT,
+    year INT(4),
+    percentage varchar(3),
+    no_of_medals INT(5));
+
+Derive the values from the tables(students, marks and medals) and insert into the above table. Use insert with select statement
+
+    insert into students_summary
+    (student_id, student_name, year, percentage, no_of_medals)
+    select StudentMark.id, StudentMark.name, StudentMark.year, percentage,
+    (
+        select count(medal_won) from medals
+        where StudentMark.id = medals.student_id and StudentMark.year = medals.year
+    ) as medals
+    from 
+    (
+        select students.id, students.name , marks.year, marks.student_id, concat(round(sum(marks.annual)/5,0),'%') as percentage from students
+        inner join marks on marks.student_id = students.id
+        group by students.name, marks.year
+    ) as StudentMark
+    left join medals on StudentMark.student_id = medals.student_id
+    group by StudentMark.name, StudentMark.year
+    order by StudentMark.id, StudentMark.year;
