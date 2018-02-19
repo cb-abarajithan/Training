@@ -1,0 +1,82 @@
+[
+    {
+        "name": "BruceWayne",
+        "address": "Waynemanner, Gotham",
+        "numbers": [
+            {
+                "number": 345654647,
+                "type": "HOME"
+            }
+        ]
+    },
+    {
+        "name": "ClarkKent",
+        "address": "Farmhouse, Metropolis",
+        "numbers": [
+            {
+                "number": 45674745,
+                "type": "MOBILE"
+            },
+            {
+                "number": 39835983,
+                "type": "WORK"
+            },
+            {
+                "number": 29385643,
+                "type": "HOME"
+            }
+        ]
+    },
+    {
+        "name": "DianaPrince",
+        "address": "Themaskeera, Atlanta",
+        "numbers": [
+            {
+                "number": 586564357,
+                "type": "MOBILE"
+            },
+            {
+                "number": 34897573,
+                "type": "WORK"
+            }
+        ]
+    },
+    {
+        "name": "BruceBanner",
+        "address": "Some Streets, India",
+        "numbers": [
+            {
+                "number": 87634786,
+                "type": "MOBILE"
+            },
+            {
+                "number": 94895784,
+                "type": "HOME"
+            }
+        ]
+    },
+    {
+        "name": "TonyStark",
+        "address": "BeachHouse, California",
+        "numbers": [
+            {
+                "number": 857684598,
+                "type": "HOME"
+            }
+        ]
+    },
+    {
+        "name": "GodamnBatman",
+        "address": "The Batcave, Gotham",
+        "numbers": [
+            {
+                "number": 82735623,
+                "type": "MOBILE"
+            },
+            {
+                "number": 948475673,
+                "type": "WORK"
+            }
+        ]
+    }
+]
