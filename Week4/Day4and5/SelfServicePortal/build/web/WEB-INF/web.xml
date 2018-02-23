@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    <servlet>
+        <servlet-name>Login</servlet-name>
+        <servlet-class>portal.service.Login</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GetDetails</servlet-name>
+        <servlet-class>portal.service.GetDetails</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditDetails</servlet-name>
+        <servlet-class>portal.service.EditDetails</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeactivateUser</servlet-name>
+        <servlet-class>portal.service.DeactivateUser</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RegisterUser</servlet-name>
+        <servlet-class>portal.service.RegisterUser</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Login</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetDetails</servlet-name>
+        <url-pattern>/getdetails</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditDetails</servlet-name>
+        <url-pattern>/editdetails</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeactivateUser</servlet-name>
+        <url-pattern>/deactivate</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RegisterUser</servlet-name>
+        <url-pattern>/registeruser</url-pattern>
+    </servlet-mapping>
+</web-app>
