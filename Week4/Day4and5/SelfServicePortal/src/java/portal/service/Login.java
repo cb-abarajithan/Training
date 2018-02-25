@@ -5,6 +5,7 @@
  */
 package portal.service;
 
+import portal.service.db.UserDao;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.regex.Pattern;

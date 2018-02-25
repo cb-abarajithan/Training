@@ -1,16 +1,18 @@
-package portal.service;
+package portal.service.db;
 
 public class User {
 
+    private static final String DELIMITER = "~";
+    
     private String fname;
     private String lname;
     private String email;
-    private String address;
+    private Address address;
 
     User(){
     }
 
-    public User(String fname, String lname, String addr, String email) {
+    public User(String fname, String lname, String email, Address addr) {
         this.fname = fname;
         this.lname = lname;
         this.email = email;
@@ -45,21 +47,21 @@ public class User {
         return email;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(Address address) {
         this.address = address;
     }
 
-    public String getAddress() {
+    public Address getAddress() {
         return address;
     }
 
     @Override
     public String toString() {
         return new StringBuilder()
-                .append(fname).append("&")
-                .append(lname).append("&")
-                .append(email).append("&")
-                .append(address)
+                .append(fname).append(DELIMITER)
+                .append(lname).append(DELIMITER)
+                .append(email).append(DELIMITER)
+                .append(address.toString())
                 .toString();
     }
     

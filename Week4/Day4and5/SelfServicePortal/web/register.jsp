@@ -6,8 +6,8 @@
 <html>
   <head>
     <title>Register - Self Service Portal</title>
-    <link rel="stylesheet" href="styles.css"/>
-    <script src="jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="css/styles.css"/>
+    <script src="js/jquery-3.3.1.min.js"></script>
   </head>
   
   <style>

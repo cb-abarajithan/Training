@@ -5,6 +5,7 @@
  */
 package portal.service;
 
+import portal.service.db.UserDao;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import portal.service.db.Address;
 
 /**
  *
@@ -32,11 +34,18 @@ public class EditDetails extends HttpServlet {
         String email = (String) session.getAttribute("email");
         String fname = request.getParameter("fname");
         String lname = request.getParameter("lname");
-        String addr = request.getParameter("addr");
+        Address addr = new Address(request.getParameter("line1"), 
+                request.getParameter("line2"), 
+                request.getParameter("city"), 
+                Long.parseLong((request.getParameter("zip").isEmpty())?"0":request.getParameter("zip")), 
+                request.getParameter("state"), 
+                request.getParameter("country")
+        );
 
         try{
-            success = UserDao.updateDetails(fname, lname, addr, email);
+            success = UserDao.updateDetails(fname, lname, email, addr);
         }catch(Exception e){
+            System.out.println(e);
             session.setAttribute("email", null);
             session.invalidate();
             response.sendRedirect("index.jsp");

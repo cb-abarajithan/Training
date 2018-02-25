@@ -5,6 +5,8 @@
  */
 package portal.service;
 
+import portal.service.db.UserDao;
+import portal.service.db.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;

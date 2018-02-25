@@ -8,8 +8,8 @@
 <html>
     <head>
         <title>Welcome - Self Service Portal</title>
-        <link rel="stylesheet" href="styles.css"/>
-        <script src="jquery-3.3.1.min.js"></script>
+        <link rel="stylesheet" href="css/styles.css"/>
+        <script src="js/jquery-3.3.1.min.js"></script>
     </head>
     <style>
         body{
@@ -46,7 +46,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td style="vertical-align: top; padding: 10px;">
                         <div class="ssp-subheading" style="padding: 8px;">ADDRESS</div>
                     </td>
                     <td>
@@ -61,14 +61,26 @@
     <script>
         $(function(){
            $.post("getdetails", function(data){
-                var arr = data.split("&");
+                var arr = data.split("~");
                 $("#toolbar_greet").html("Hi, "+arr[0]);
                 $("#name").html(arr[0] + " " + arr[1]);
                 $("#email").html(arr[2]);
-                if(arr[3]===null || arr[3]==='null')
+                var temp = arr[3].split("$");
+                if(temp.length===0){
                     $("#address").html('-- NA --');
-                else
-                    $("#address").html(arr[3]);
+                }else{
+                    var addr = "";
+                    for(i=0; i<temp.length; i++){
+                        if(temp[i]==="null" || temp[i]==="0" || temp[i]===''){
+                            continue;
+                        }
+                        addr += temp[i]+"<br>";
+                    }
+                    if(addr.length === 0){
+                        addr = '-- NA --';
+                    }
+                        $("#address").html(addr);
+                }   
             }); 
         });
         $("#edit_btn").click(function(){
