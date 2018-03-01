@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Phone Book</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="css/styles.css"/>
+        <script src="js/jquery-3.3.1.min.js"></script>
+        <style>
+            body{
+                display: block;
+                margin: 0px;
+            }
+            th {
+                font-size: 10px;
+                background-color: #a49ac4;
+                color: white;
+                text-align: left;
+                padding: 8px;
+                cursor: default;
+            }
+
+            tr{
+                cursor: pointer;
+            }
+
+            tr:nth-child(odd) {
+                background-color: #e5e5e5;
+            }
+
+            td {
+                font-size: 15px;
+                color: #212121;
+                text-align: left;
+                padding: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="toolbar">
+            <div class="toolbar-title">Phone Book</div>
+        </div>
+        <div class="content">
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 0px 0px;">
+                <div class="title">All Contacts</div>
+                <a href="add.html" class="pb-a" style="color: #85c2a7; font-size: 16px;">Add New</a>
+            </div>
+            <div class="center-content">
+                <table id="table" cellspacing="0" cellpadding="0" style="margin-top: 32px; width: 100%;">
+                    <tr>
+                        <th bgcolor="#a49ac4">NAME</th>
+                        <th bgcolor="#a49ac4">ADDRESS</th>
+                        <th bgcolor="#a49ac4">PHONE </th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <script>
+            $(function(){
+               $.post("getall", function(json){
+                   $.each(json, function(i, person){
+                       var $tr = $("<tr>").appendTo($("#table"));
+                       $tr.attr('id', "contact"+i);
+                       $("<td>").text(person.fname + " "+person.lname).appendTo($tr);
+                       
+                       var addr = "";
+                       if(person.line1!=='') addr+=person.line1+", ";
+                       if(person.line2!=='') addr+=person.line2+", ";
+                       if(person.city!=='') addr+=person.city+", ";
+                       if(person.state!=='') addr+=person.state+", ";
+                       if(person.zip!==0) addr+=person.zip+", ";
+                       if(person.country!=='') addr+=person.country;
+                       if(addr==='') addr = "-- NA --";
+                       $("<td>").text(addr).appendTo($tr);
+                       
+                       $("<td>").html(person.mobile+"(Mobile) "+person.work+"(Work) "+person.home+"(Home)").appendTo($tr);
+                       
+                       $("#contact"+i).click(function(){
+                           window.location.href = "edit.html?"+(i+1);
+                       });
+                       
+                   });
+               });
+            });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    <servlet>
+        <servlet-name>AddContact</servlet-name>
+        <servlet-class>phone.book.AddContact</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateContact</servlet-name>
+        <servlet-class>phone.book.UpdateContact</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GetAllContacts</servlet-name>
+        <servlet-class>phone.book.GetAllContacts</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GetById</servlet-name>
+        <servlet-class>phone.book.GetById</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AddContact</servlet-name>
+        <url-pattern>/add</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateContact</servlet-name>
+        <url-pattern>/update</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetAllContacts</servlet-name>
+        <url-pattern>/getall</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetById</servlet-name>
+        <url-pattern>/getbyid</url-pattern>
+    </servlet-mapping>
+</web-app>

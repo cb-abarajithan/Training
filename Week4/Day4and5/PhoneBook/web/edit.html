@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Edit contact</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="css/styles.css"/>
+        <script src="js/jquery-3.3.1.min.js"></script>
+        <style>
+            body{
+                display: block;
+                margin: 0px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="toolbar">
+            <div class="toolbar-title">Phone Book</div>
+        </div>
+        <div class="content">
+            <div class="title">Edit Contact</div>
+        </div>
+        <div class="center-content">
+            <table>
+                <tr>
+                    <td>
+                        <div class="subheading" style="padding: 8px;">NAME</div>
+                    </td>
+                    <td>
+                        <div class="row">
+                            <input class="text-box" type="text" id="fname" style="width: 122px;" placeholder="First Name"> 
+                            <input class="text-box" type="text" id="lname" style="width: 122px;" placeholder="Last Name">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="subheading" style="padding: 8px;">ADDRESS</div>
+                    </td>
+                    <td>
+                        <div class="row">
+                            <input id="line1" class="text-box" type="text" placeholder="Address Line 1">    
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <div class="row">
+                            <input id="line2" class="text-box" type="text" placeholder="Address Line 2">    
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <div class="row">
+                            <input id="city" class="text-box" type="text" style="width: 122px;" placeholder="City">
+                            <select id="state" class="text-box" style="width: 145px; height: 44px;">
+                                <option value="" selected disabled>State</option>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <div class="row">
+                            <input id="zip" class="text-box" type="text" style="width: 122px;" placeholder="Zip">
+                            <select id="country" class="text-box" style="width: 145px; height: 44px;">
+                                <option value="Country" selected disabled>Country</option>
+                                <option value="India">India</option>
+                                <option value="United States">United States</option>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="subheading" style="padding: 8px;">PHONE (WORK)</div>
+                    </td>
+                    <td>
+                        <div class="row">
+                            <input id="work" class="text-box" type="text" placeholder="Work" maxlength="12">    
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="subheading" style="padding: 8px;">PHONE (MOBILE)</div>
+                    </td>
+                    <td>
+                        <div class="row">
+                            <input id="mobile" class="text-box" type="text" placeholder="Mobile" maxlength="12">    
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="subheading" style="padding: 8px;">PHONE (HOME)</div>
+                    </td>
+                    <td>
+                        <div class="row">
+                            <input id="home" class="text-box" type="text" placeholder="Home" maxlength="12">    
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <div id="msg" class="pb-msg"></div>
+            <div class="row">
+                <button id="save_btn" class="pb-btn">Save details</button>
+                <a class="pb-a" href="index.html" style="padding: 16px">Discard</a>
+            </div>
+        </div>
+        <script>
+            $(function(){
+               $.post("getbyid", {id: window.location.href.split("?")[1]} , function(person){
+                    if(person.err === ''){
+                        $("#fname").val(person.fname);
+                        $("#lname").val(person.lname);
+                        $("#line1").val(person.line1);
+                        $("#line2").val(person.line2);
+                        $("#city").val(person.city);
+                        $("#state").val(person.state);
+                        $("#zip").val(person.zip===0?'':person.zip);
+                        $("#country").val(person.country);
+                        $("#home").val(person.home===0?'':person.home);
+                        $("#mobile").val(person.mobile===0?'':person.mobile);
+                        $("#work").val(person.work===0?'':person.work);
+                    }else{
+                        $("#msg").html(person.err);
+                        $("#msg").css('color', '#ff3366');
+                    }
+                    
+               });
+            });
+            $("#save_btn").on('click', function(){
+                
+               $.post("update", {
+                   id: window.location.href.split("?")[1],
+                   fname: $("#fname").val(),
+                   lname: $("#lname").val(),
+                   line1: $("#line1").val(),
+                   line2: $("#line2").val(),
+                   city: $("#city").val(),
+                   state: $("#state").val(),
+                   zip: $("#zip").val(),
+                   country: $("#country").val(),
+                   home: $("#home").val(),
+                   mobile: $("#mobile").val(),
+                   work: $("#work").val()
+               }, function(res){
+                   var msg = res;
+                   var color = '#ff3366';
+                   if(res === 'success'){
+                        color = '#00cc33';
+                        msg = "Contact updated!";
+                   }
+                   $("#msg").html(msg);
+                   $("#msg").css('color', color);
+               });
+            });
+        </script>
+    </body>
+</html>
